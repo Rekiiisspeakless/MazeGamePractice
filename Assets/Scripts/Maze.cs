@@ -6,10 +6,12 @@ public class Maze : MonoBehaviour {
 
     public int sizeX, sizeZ;
     public GameObject wallPrefab;
+	public GameObject swordPrefab;
 	public GameObject treasurePrefab;
 	public GameObject enemyPrefab;
 	public GameObject applePrefab;
 	public GameObject potionPrefab;
+	public GameObject[] drops;
 	public GameObject[] apples;
 	public GameObject[] potions;
     private static float cellSize = 1f;
@@ -23,6 +25,8 @@ public class Maze : MonoBehaviour {
 	public int itemNum = 5;
 	public int appleNum = 0;
 	public int potionNum = 0;
+	public int currentDropsNum = 0;
+	public int dropsNum;
 
 	// Use this for initialization
 	void Start () {
@@ -46,6 +50,8 @@ public class Maze : MonoBehaviour {
 
 	void CreateEnemy(){
 		Debug.Log ("enemies length = " + enemies[0].enemyNum);
+		dropsNum = enemies [0].enemyNum;
+		drops = new GameObject[dropsNum];
 		for (int i = 0; i < enemies[0].enemyNum - 1; ++i) {
 			enemies [i].enemyObject = Instantiate (enemyPrefab, enemies[i].enemyVect, Quaternion.identity) as GameObject;
 			mark [(int)(enemies [i].enemyVect.x / cellSize), (int)(enemies [i].enemyVect.z / cellSize)] = true;
@@ -164,4 +170,12 @@ public class Maze : MonoBehaviour {
 		mark [0, 0] = true;
 		mark [sizeX - 1, sizeZ - 1] = true;
     }
+	public void DropItem(Vector3 dropPosition){
+		Random.seed = System.Guid.NewGuid().GetHashCode();
+		int isDrop = Random.Range(0, 15);
+		if (isDrop % 3 == 0) {
+			drops [currentDropsNum] = Instantiate (swordPrefab, dropPosition, Quaternion.identity) as GameObject;
+			currentDropsNum++;
+		}
+	}
 }

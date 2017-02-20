@@ -6,7 +6,7 @@ public class EnemyControl : MonoBehaviour {
 
 	public Animator anim;
 	public float _sightAngle = 30f; 
-	public float dropDownSpeed = 0.05f;
+	public float dropDownSpeed = 0.1f;
 	/*int scream;
 	int basicAttack;
 	int getHit;
@@ -25,7 +25,7 @@ public class EnemyControl : MonoBehaviour {
 	float moveSpeed = 0.3f;
 	CharacterController enemyController;
 	public float destroyDelay = 0f;
-	public float _destroyDelay = 10f;
+	public float _destroyDelay = 5f;
 	public float dropDownDelay = 0f;
 	public float _dropDownDelay = 3f;
 	public float  _getHitDelay = 15f; 
@@ -40,7 +40,11 @@ public class EnemyControl : MonoBehaviour {
 		}
 		if (other.tag == "PlayerAttackRange" && player.GetComponent<PlayerMovementControl>().attacking) {
 			GetHit ();
-			enemyCurrentHealth -= 5f;
+			if (player.GetComponent<PlayerMovementControl> ().isSwordEquipped) {
+				enemyCurrentHealth -= 20f;
+			} else {
+				enemyCurrentHealth -= 5f;
+			}
 			Debug.Log ("currentHealth = " + enemyCurrentHealth);
 
 			//anim.SetTrigger("GetHit");
@@ -78,6 +82,7 @@ public class EnemyControl : MonoBehaviour {
 			destroyDelay -= Time.deltaTime;
 			transform.Translate(Vector3.down * dropDownSpeed * Time.deltaTime);
 			if (destroyDelay <= 0) {
+				maze.DropItem (new Vector3(transform.position.x, 0.2f, transform.position.z));
 				Destroy (gameObject);
 			}
 		}

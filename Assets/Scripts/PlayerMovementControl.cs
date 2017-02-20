@@ -17,6 +17,7 @@ public class PlayerMovementControl : MonoBehaviour {
 	public Maze maze;
 	public bool attacking = false;
 	public static float _attackingDelay = 10f;
+	public bool isSwordEquipped = false;
 
 	private float attackingDelay = _attackingDelay;
 	private float getHitDelay = _getHitDelay;
@@ -26,12 +27,15 @@ public class PlayerMovementControl : MonoBehaviour {
 	private Transform playerTransform;
 	private Quaternion playerRotation;
 	private GameObject menu;
+	private GameObject sword;
 	private GameObject headerText;
 	private GameObject retryText;
 	private bool gameover = false;
 	private bool gamewin = false;
 	void Start(){
 		playerRotation = playerTransform.rotation;
+		sword = GameObject.Find ("Sword");
+		sword.SetActive (false);
 		maze = GameObject.Find ("GameManager").GetComponent<Maze> ();
 		headerText = GameObject.Find ("HeaderText");
 		retryText = GameObject.Find ("RetryText");
@@ -41,6 +45,7 @@ public class PlayerMovementControl : MonoBehaviour {
 
 	void Awake ()
 	{
+		
 		anim = GetComponentInChildren<Animator>();
 		playerRidgidBody = GetComponent<Rigidbody>();
 		playerTransform = GetComponent<Transform> ();
@@ -100,9 +105,15 @@ public class PlayerMovementControl : MonoBehaviour {
 		Debug.Log ("Hit!");
 		if (other.tag == "Apple") {
 			currentHealth = (currentHealth + 20f > fullHealth) ? fullHealth : currentHealth + 20f ;
-		} else if (other.tag == "Potion") {
+		}
+		if (other.tag == "Potion") {
 			currentHealth = fullHealth;
-		}else if(other.tag == "Goal"){
+		}
+		if (other.tag == "Sword") {
+			isSwordEquipped = true;
+			sword.SetActive (true);
+		}
+		if(other.tag == "Goal"){
 			menu.SetActive (true);
 			headerText.GetComponent<Text> ().text = "You Win!";
 			retryText.GetComponent<Text>().text = "Play Again";
