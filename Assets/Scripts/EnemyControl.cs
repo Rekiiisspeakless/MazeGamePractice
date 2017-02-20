@@ -6,6 +6,7 @@ public class EnemyControl : MonoBehaviour {
 
 	public Animator anim;
 	public float _sightAngle = 30f; 
+	public float dropDownSpeed = 0.05f;
 	/*int scream;
 	int basicAttack;
 	int getHit;
@@ -23,6 +24,10 @@ public class EnemyControl : MonoBehaviour {
 	float chaseDist = 0.7f;
 	float moveSpeed = 0.3f;
 	CharacterController enemyController;
+	public float destroyDelay = 0f;
+	public float _destroyDelay = 10f;
+	public float dropDownDelay = 0f;
+	public float _dropDownDelay = 3f;
 	public float  _getHitDelay = 15f; 
 	public float enemyHealth = 100f;
 	public float enemyCurrentHealth = 100f;
@@ -41,6 +46,7 @@ public class EnemyControl : MonoBehaviour {
 			//anim.SetTrigger("GetHit");
 			getHitDelay = _getHitDelay;
 			if (enemyCurrentHealth == 0f) {
+				dropDownDelay = _dropDownDelay;
 				Die ();
 				//Destroy (gameObject);
 			}
@@ -68,6 +74,19 @@ public class EnemyControl : MonoBehaviour {
 	}
 
 	void Update(){
+		if (destroyDelay > 0) {
+			destroyDelay -= Time.deltaTime;
+			transform.Translate(Vector3.down * dropDownSpeed * Time.deltaTime);
+			if (destroyDelay <= 0) {
+				Destroy (gameObject);
+			}
+		}
+		if (dropDownDelay > 0) {
+			dropDownDelay -= Time.deltaTime;
+			if (dropDownDelay <= 0) {
+				destroyDelay = _destroyDelay;
+			}
+		}
 		if (enemyCurrentHealth <= 0) {
 			return;
 		}
