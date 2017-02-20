@@ -12,6 +12,8 @@ public class EnemyControl : MonoBehaviour {
 	int walk;
 	int die;*/
 	GameObject player;
+	public GameObject detector;
+	WallDetector wallDetector;
 	Rigidbody enemyRigidbody;
 	Transform enemyTransform;
 	Maze maze;
@@ -32,7 +34,6 @@ public class EnemyControl : MonoBehaviour {
 			return;
 		}
 		if (other.tag == "PlayerAttackRange" && player.GetComponent<PlayerMovementControl>().attacking) {
-			
 			GetHit ();
 			enemyCurrentHealth -= 5f;
 			Debug.Log ("currentHealth = " + enemyCurrentHealth);
@@ -53,6 +54,7 @@ public class EnemyControl : MonoBehaviour {
 	void Awake () 
 	{
 		anim = GetComponent<Animator>();
+		wallDetector = detector.GetComponent<WallDetector> ();
 		enemyController = GetComponent<CharacterController> ();
 		enemyRigidbody = GetComponent<Rigidbody> ();
 		enemyTransform = GetComponent<Transform> ();
@@ -139,7 +141,7 @@ public class EnemyControl : MonoBehaviour {
 				Walk ();
 			} else if (getHitDelay > 0) {
 				getHitDelay--;
-			} else if (attackDelay <= 0 && !bumpToWall) {
+			} else if (attackDelay <= 0 && !wallDetector.isBumpToWall) {
 				if(!player.GetComponent<PlayerMovementControl>().attacking){
 					BasicAttack ();
 					attackDelay = _attackDelay;
