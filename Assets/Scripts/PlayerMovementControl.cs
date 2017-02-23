@@ -119,6 +119,15 @@ public class PlayerMovementControl : MonoBehaviour {
 			retryText.GetComponent<Text>().text = "Play Again";
 			gamewin = true;
 		}
+		if (other.tag == "Portal") {
+			Debug.Log ("Portal Hit");
+			for (int i = 0; i < maze.currentPortalNum; ++i) {
+				if (Vector3.Distance (playerTransform.position, maze.portalPosition[i]) < 1) {
+					playerTransform.position = new Vector3(maze.teleportPosition [i].x, 
+						playerTransform.position.y, maze.teleportPosition [i].z);
+				}
+			}
+		}
 	}
 
 	void MovementManagement(float horizontal, float vertical)

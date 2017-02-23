@@ -11,6 +11,7 @@ public class Maze : MonoBehaviour {
 	public GameObject enemyPrefab;
 	public GameObject applePrefab;
 	public GameObject potionPrefab;
+	public GameObject portalPrefab;
 	public GameObject[] drops;
 	public GameObject[] apples;
 	public GameObject[] potions;
@@ -19,6 +20,9 @@ public class Maze : MonoBehaviour {
 
 
     public MazeCell[,] cells;
+	public Vector3[] teleportPosition;
+	public Vector3[] portalPosition;
+	public GameObject[] portal;
 	public bool[,] mark;
 	public Enemy[] enemies;
 	public bool playerHit = false;
@@ -27,6 +31,8 @@ public class Maze : MonoBehaviour {
 	public int potionNum = 0;
 	public int currentDropsNum = 0;
 	public int dropsNum;
+	public int portalNum = 2;
+	public int currentPortalNum = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -35,6 +41,7 @@ public class Maze : MonoBehaviour {
 		enemies = generator.CreateMaze();
 		CreateEnemy ();
 		CreateItem ();
+		CreatePortal ();
 	}
 	
 	// Update is called once per frame
@@ -79,6 +86,30 @@ public class Maze : MonoBehaviour {
 			}*/
 		}
 	}
+	private void CreatePortal(){
+		teleportPosition = new Vector3[portalNum];
+		portalPosition = new Vector3[portalNum];
+		portal = new GameObject[portalNum];
+
+		Random.seed = System.Guid.NewGuid().GetHashCode();
+
+		while (portalNum != 0) {
+			Random.seed = System.Guid.NewGuid().GetHashCode();
+			int	portalX1 = Random.Range(0, sizeX);
+			int portalZ1 = Random.Range (0, sizeZ);
+			int	portalX2 = Random.Range(0, sizeX);
+			int portalZ2 = Random.Range (0, sizeZ);
+			if(!mark[portalX1, portalZ1] && !mark[portalX2, portalZ2]){
+				portal[currentPortalNum] = Instantiate (portalPrefab, new Vector3((float)portalX1, 0.5f, (float)portalZ1), Quaternion.identity) as GameObject;
+				portalPosition[currentPortalNum] = new Vector3((float)portalX1, 0.5f, (float)portalZ1);
+				portalNum--;
+				teleportPosition[currentPortalNum] = new Vector3((float)portalX2, 0.5f, (float)portalZ2);
+				currentPortalNum++;
+				Debug.Log ("currentPortalNum: " + currentPortalNum);
+			}
+		}
+
+	}
 	private void CreateItem(){
 		while (itemNum != 0) {
 			Random.seed = System.Guid.NewGuid().GetHashCode();
@@ -100,6 +131,7 @@ public class Maze : MonoBehaviour {
 					itemNum--;
 					applePrefab.name = "apple " + appleNum;
 				}
+				mark [itemX, itemZ] = true;
 			}
 		}
 	}
