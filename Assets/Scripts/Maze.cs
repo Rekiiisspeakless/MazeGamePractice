@@ -28,6 +28,7 @@ public class Maze : MonoBehaviour {
 	public Vector3[] portalPosition;
 	public GameObject[] portal;
 	public GameObject[] traps;
+	public GameObject[] spearTraps;
 	public bool[,] mark;
 	public Enemy[] enemies;
 	public bool playerHit = false;
@@ -104,10 +105,10 @@ public class Maze : MonoBehaviour {
 
 		while (portalNum != 0) {
 			Random.seed = System.Guid.NewGuid().GetHashCode();
-			int	portalX1 = Random.Range(0, sizeX);
-			int portalZ1 = Random.Range (0, sizeZ);
-			int	portalX2 = Random.Range(0, sizeX);
-			int portalZ2 = Random.Range (0, sizeZ);
+			int	portalX1 = Random.Range(0, sizeX );
+			int portalZ1 = Random.Range (0, sizeZ );
+			int	portalX2 = Random.Range(0, sizeX );
+			int portalZ2 = Random.Range (0, sizeZ );
 			if(!mark[portalX1, portalZ1] && !mark[portalX2, portalZ2]){
 				portal[currentPortalNum] = Instantiate (portalPrefab, new Vector3((float)portalX1, 0.5f, (float)portalZ1), Quaternion.identity) as GameObject;
 				portalPosition[currentPortalNum] = new Vector3((float)portalX1, 0.5f, (float)portalZ1);
@@ -122,13 +123,35 @@ public class Maze : MonoBehaviour {
 	}
 	private void CreateTrap(){
 		traps = new GameObject[trapNum];
+		spearTraps = new GameObject[trapNum];
 		while (trapNum != 0) {
 			Random.seed = System.Guid.NewGuid().GetHashCode();
-			int trapX = Random.Range(0, sizeX);
-			int trapZ = Random.Range (0, sizeZ);
+			int trapX = Random.Range(0, sizeX );
+			int trapZ = Random.Range (0, sizeZ );
 			if (!mark [trapX, trapZ]) {
-				int kind = Random.Range (0, trapKind);
-				// 1: bladefan 2: bladetrap 3: spearTrap 4: axeTrap
+				int dir = Random.Range (1, 5);
+				int randXZ = Random.Range (1, sizeX );
+				//1: north 2: east 3: south 4: west
+				Debug.Log("dir = " + dir);
+				if (dir == 1) {
+					spearTraps [currentTrapNum] = Instantiate (spearTrapPrefab, new Vector3 (sizeX - 1 + 0.5f, 0.2f, randXZ), Quaternion.identity) as GameObject;
+					spearTraps [currentTrapNum].transform.Rotate (Vector3.forward, 90f);
+					spearTraps[currentTrapNum].name = "spearTrap north";
+				} else if (dir == 2) {
+					spearTraps [currentTrapNum] = Instantiate (spearTrapPrefab, new Vector3 (randXZ, 0.2f, 0f - 0.5f), Quaternion.identity) as GameObject;	
+					spearTraps [currentTrapNum].transform.Rotate (Vector3.right, 90f);
+					spearTraps[currentTrapNum].name = "spearTrap east";
+				} else if (dir == 3) {
+					spearTraps [currentTrapNum] = Instantiate (spearTrapPrefab, new Vector3 (0f - 0.5f, 0.2f, randXZ), Quaternion.identity) as GameObject;
+					spearTraps [currentTrapNum].transform.Rotate (Vector3.forward, -90f);
+					spearTraps[currentTrapNum].name = "spearTrap south";
+				} else {
+					spearTraps [currentTrapNum] = Instantiate (spearTrapPrefab, new Vector3 (randXZ, 0.2f, sizeZ - 1 + 0.5f), Quaternion.identity) as GameObject;
+					spearTraps [currentTrapNum].transform.Rotate (Vector3.right, -90f);
+					spearTraps[currentTrapNum].name = "spearTrap west";
+				}
+				int kind = Random.Range (1, trapKind);
+				// 1: bladefan 2: bladetrap 3: axeTrap
 				if (kind == 1) {
 					traps [currentTrapNum] = Instantiate (bladeFanTrapPrefab, new Vector3(trapX, 0f, trapZ), Quaternion.identity) as GameObject;
 					currentTrapNum++;
@@ -137,24 +160,22 @@ public class Maze : MonoBehaviour {
 					traps [currentTrapNum] = Instantiate (bladeTrapPrefab, new Vector3(trapX, 0f, trapZ), Quaternion.identity) as GameObject;
 					currentTrapNum++;
 					trapNum--;
-				} else if (kind == 3) {
-					traps [currentTrapNum] = Instantiate (spearTrapPrefab, new Vector3(trapX, 0f, trapZ), Quaternion.identity) as GameObject;
-					currentTrapNum++;
-					trapNum--;
-				} else {
+				}  else {
 					traps [currentTrapNum] = Instantiate (axeTrapPrefab, new Vector3(trapX, 0f, trapZ), Quaternion.identity) as GameObject;
 					currentTrapNum++;
 					trapNum--;
 				}
 				mark [trapX, trapZ] = true;
+
 			}
+
 		}
 	}
 	private void CreateItem(){
 		while (itemNum != 0) {
 			Random.seed = System.Guid.NewGuid().GetHashCode();
-			int itemX = Random.Range(0, sizeX);
-			int itemZ = Random.Range (0, sizeZ);
+			int itemX = Random.Range(0, sizeX );
+			int itemZ = Random.Range (0, sizeZ );
 			if (!mark [itemX, itemZ]) {
 				// 0 = apple, 1 = potion
 				int kind = Random.Range (0, 2);
