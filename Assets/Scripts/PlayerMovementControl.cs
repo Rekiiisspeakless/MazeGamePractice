@@ -58,6 +58,7 @@ public class PlayerMovementControl : MonoBehaviour {
 		anim.SetBool ("isWalk", !boolper);
 		anim.SetBool ("isIdle", false);
 		anim.SetBool ("isAttack", false);
+		anim.SetBool ("isRoll", false);
 	}
 
 
@@ -67,6 +68,7 @@ public class PlayerMovementControl : MonoBehaviour {
 		anim.SetBool ("isWalk", false);
 		anim.SetBool ("isIdle", false);
 		anim.SetBool ("isAttack", true);
+		anim.SetBool ("isRoll", false);
 	}
 
 	public void Idle(){
@@ -74,12 +76,17 @@ public class PlayerMovementControl : MonoBehaviour {
 		anim.SetBool ("isWalk", false);
 		anim.SetBool ("isIdle", true);
 		anim.SetBool ("isAttack", false);
+		anim.SetBool ("isRoll", false);
 	}
 	public void GetHit(){
 		anim.SetBool ("isHit", true);
 		anim.SetBool ("isWalk", false);
 		anim.SetBool ("isIdle", false);
 		anim.SetBool ("isAttack", false);
+		anim.SetBool ("isRoll", false);
+	}
+	public void Roll(){
+		anim.SetBool ("isRoll", true);
 	}
 
 	void Update () {
@@ -153,20 +160,26 @@ public class PlayerMovementControl : MonoBehaviour {
 				attacking = false;
 			}
 		}
-		if (maze.playerHit) {
+		if (anim.GetCurrentAnimatorStateInfo (0).IsName ("roll")) {
+			playerRidgidBody.MovePosition(playerRidgidBody.position + playerTransform.forward * 1f * Time.deltaTime);
+		}
+		if (maze.playerHit && !anim.GetCurrentAnimatorStateInfo(0).IsName("roll")) {
 			getHit = true;
 			getHitDelay = _getHitDelay;
 
-		}else if(getHitDelay <= 0 && getHit){
+		}else if(Input.GetButtonDown("Roll")){
+			Roll ();
+		}else if(getHitDelay <= 0 && getHit ){
 			GetHit ();
 			currentHealth -= 5f;
 			getHit = false;
-		}else if (Input.GetButton ("Attack")) {
+		}else if (Input.GetButtonDown ("Attack")) {
 			Attack ();
 			attacking = true;
 			attackingDelay = _attackingDelay;
 		}
-		else if(Input.GetButton("Horizontal") || Input.GetButton("Vertical"))
+		else if((Input.GetButton("Horizontal") || Input.GetButton("Vertical")) 
+			&& !anim.GetCurrentAnimatorStateInfo(0).IsName("roll"))
 		{
 			Walk ();
 			if(Vector2.Distance(Vector2.zero, new Vector2(horizontal, vertical)) > delay){
@@ -197,7 +210,7 @@ public class PlayerMovementControl : MonoBehaviour {
 	void AudioManagement()
 	{
 		//GetComponent<AudioSource>().Play();
-		if (anim.GetBool("isWalk") == true)
+		if (anim.GetBool("isWalk") == true && anim.GetBool("isRoll") == false)
 		{
 			audioFootstepDelay -= Time.deltaTime;
 			if (!GetComponent<AudioSource>().isPlaying && audioFootstepDelay <= 0)
