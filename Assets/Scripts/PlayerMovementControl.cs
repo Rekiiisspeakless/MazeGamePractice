@@ -30,10 +30,15 @@ public class PlayerMovementControl : MonoBehaviour {
 	private GameObject sword;
 	private GameObject headerText;
 	private GameObject retryText;
+	private TrapDetector trapDetector;
 	private bool gameover = false;
 	private bool gamewin = false;
 	void Start(){
 		playerRotation = playerTransform.rotation;
+		trapDetector = GameObject.Find ("TrapDetector").GetComponent<TrapDetector>();
+		if (trapDetector == null) {
+			Debug.Log ("trapDetector is null!");
+		}
 		sword = GameObject.Find ("Sword");
 		sword.SetActive (false);
 		maze = GameObject.Find ("GameManager").GetComponent<Maze> ();
@@ -162,6 +167,11 @@ public class PlayerMovementControl : MonoBehaviour {
 		}
 		if (anim.GetCurrentAnimatorStateInfo (0).IsName ("roll")) {
 			playerRidgidBody.MovePosition(playerRidgidBody.position + playerTransform.forward * 1f * Time.deltaTime);
+		}
+		if (trapDetector.isTrapHit && !anim.GetCurrentAnimatorStateInfo (0).IsName ("roll")) {
+			GetHit ();
+			trapDetector.isTrapHit = false;
+			currentHealth -= 5f;
 		}
 		if (maze.playerHit && !anim.GetCurrentAnimatorStateInfo(0).IsName("roll")) {
 			getHit = true;
