@@ -12,6 +12,10 @@ public class Maze : MonoBehaviour {
 	public GameObject applePrefab;
 	public GameObject potionPrefab;
 	public GameObject portalPrefab;
+	public GameObject axeTrapPrefab;
+	public GameObject bladeFanTrapPrefab;
+	public GameObject bladeTrapPrefab;
+	public GameObject spearTrapPrefab;
 	public GameObject[] drops;
 	public GameObject[] apples;
 	public GameObject[] potions;
@@ -23,6 +27,7 @@ public class Maze : MonoBehaviour {
 	public Vector3[] teleportPosition;
 	public Vector3[] portalPosition;
 	public GameObject[] portal;
+	public GameObject[] traps;
 	public bool[,] mark;
 	public Enemy[] enemies;
 	public bool playerHit = false;
@@ -33,6 +38,9 @@ public class Maze : MonoBehaviour {
 	public int dropsNum;
 	public int portalNum = 2;
 	public int currentPortalNum = 0;
+	public int currentTrapNum = 0;
+	public int trapNum = 5;
+	public int trapKind = 4;
 
 	// Use this for initialization
 	void Start () {
@@ -42,6 +50,7 @@ public class Maze : MonoBehaviour {
 		CreateEnemy ();
 		CreateItem ();
 		CreatePortal ();
+		CreateTrap ();
 	}
 	
 	// Update is called once per frame
@@ -106,9 +115,40 @@ public class Maze : MonoBehaviour {
 				teleportPosition[currentPortalNum] = new Vector3((float)portalX2, 0.5f, (float)portalZ2);
 				currentPortalNum++;
 				Debug.Log ("currentPortalNum: " + currentPortalNum);
+				mark [portalX1, portalZ1] = true;
 			}
 		}
 
+	}
+	private void CreateTrap(){
+		traps = new GameObject[trapNum];
+		while (trapNum != 0) {
+			Random.seed = System.Guid.NewGuid().GetHashCode();
+			int trapX = Random.Range(0, sizeX);
+			int trapZ = Random.Range (0, sizeZ);
+			if (!mark [trapX, trapZ]) {
+				int kind = Random.Range (0, trapKind);
+				// 1: bladefan 2: bladetrap 3: spearTrap 4: axeTrap
+				if (kind == 1) {
+					traps [currentTrapNum] = Instantiate (bladeFanTrapPrefab, new Vector3(trapX, 0f, trapZ), Quaternion.identity) as GameObject;
+					currentTrapNum++;
+					trapNum--;
+				} else if (kind == 2) {
+					traps [currentTrapNum] = Instantiate (bladeTrapPrefab, new Vector3(trapX, 0f, trapZ), Quaternion.identity) as GameObject;
+					currentTrapNum++;
+					trapNum--;
+				} else if (kind == 3) {
+					traps [currentTrapNum] = Instantiate (spearTrapPrefab, new Vector3(trapX, 0f, trapZ), Quaternion.identity) as GameObject;
+					currentTrapNum++;
+					trapNum--;
+				} else {
+					traps [currentTrapNum] = Instantiate (axeTrapPrefab, new Vector3(trapX, 0f, trapZ), Quaternion.identity) as GameObject;
+					currentTrapNum++;
+					trapNum--;
+				}
+				mark [trapX, trapZ] = true;
+			}
+		}
 	}
 	private void CreateItem(){
 		while (itemNum != 0) {
