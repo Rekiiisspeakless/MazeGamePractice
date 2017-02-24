@@ -9,9 +9,28 @@ public class TrapDetector : MonoBehaviour {
 			Debug.Log ("Trap!");
 			isTrapHit = true;
 		}
+		if (other.tag == "BladeFanTrap") {
+			isTrapHit = true;
+		}
+		if (other.tag == "AxeTrap") {
+			isTrapHit = true;
+		}
+		if (other.tag == "SpearTrap") {
+			isTrapHit = true;
+		}
+
 	}
 	void OnTriggerExit(Collider other){
 		if (other.tag == "BladeTrap") {
+			isTrapHit = false;
+		}
+		if (other.tag == "BladeFanTrap") {
+			isTrapHit = false;
+		}
+		if (other.tag == "AxeTrap") {
+			isTrapHit = false;
+		}
+		if (other.tag == "SpearTrap") {
 			isTrapHit = false;
 		}
 	}
