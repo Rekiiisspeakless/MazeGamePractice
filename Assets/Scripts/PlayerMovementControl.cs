@@ -168,15 +168,15 @@ public class PlayerMovementControl : MonoBehaviour {
 		if (anim.GetCurrentAnimatorStateInfo (0).IsName ("roll")) {
 			playerRidgidBody.MovePosition(playerRidgidBody.position + playerTransform.forward * 1f * Time.deltaTime);
 		}
-		if (trapDetector.isTrapHit && !anim.GetCurrentAnimatorStateInfo (0).IsName ("roll")) {
-			GetHit ();
-			trapDetector.isTrapHit = false;
-			currentHealth -= 5f;
-		}
+
 		if (maze.playerHit && !anim.GetCurrentAnimatorStateInfo(0).IsName("roll")) {
 			getHit = true;
 			getHitDelay = _getHitDelay;
 
+		}else if (trapDetector.isTrapHit && !anim.GetCurrentAnimatorStateInfo (0).IsName ("roll")) {
+			GetHit ();
+			trapDetector.isTrapHit = false;
+			currentHealth -= 5f;
 		}else if(Input.GetButtonDown("Roll")){
 			Roll ();
 		}else if(getHitDelay <= 0 && getHit ){
