@@ -191,10 +191,13 @@ public class PlayerMovementControl : MonoBehaviour {
 			getHit = true;
 			getHitDelay = _getHitDelay;
 
-		}else if (trapDetector.isTrapHit && !anim.GetCurrentAnimatorStateInfo (0).IsName ("roll")) {
-			GetHit ();
+		}else if (trapDetector.isTrapHit) {
+			if (!anim.GetCurrentAnimatorStateInfo (0).IsName ("roll")) {
+				GetHit ();
+				currentHealth -= 5f;
+			}
 			trapDetector.isTrapHit = false;
-			currentHealth -= 5f;
+
 		}else if(Input.GetButtonDown("Roll")){
 			Roll ();
 		}else if(getHitDelay <= 0 && getHit ){

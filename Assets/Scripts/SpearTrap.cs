@@ -9,7 +9,7 @@ public class SpearTrap : MonoBehaviour {
 	public float timerThreshold = 5f;
 	public float timer = 0f;
 	public bool start = false;
-	public float spearSpeed = 0.02f;
+	public float spearSpeed = 0.07f;
 	// Use this for initialization
 	void Start () {
 		
