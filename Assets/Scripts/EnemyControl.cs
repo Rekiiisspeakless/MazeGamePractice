@@ -106,7 +106,7 @@ public class EnemyControl : MonoBehaviour {
 
 		Vector3 enemyDir = player.transform.position  - enemyRigidbody.position;
 		float angle = Vector3.Angle (enemyDir, enemyTransform.forward);
-		if (Vector3.Distance (enemyRigidbody.position, player.transform.position) < alertDist && angle < _sightAngle) {
+		if (Vector3.Distance (enemyRigidbody.position, player.transform.position) < alertDist) {
 			//north: 1, west: 2, south: 3, east: 4
 		//int dir = (enemyDir.x > 0)?((enemyDir.z > 0) ? : ): ;
 			//int dir = 0;
@@ -153,9 +153,11 @@ public class EnemyControl : MonoBehaviour {
 			if (attackDelay > 0) {
 				attackDelay -= Time.deltaTime;
 			}
-			enemyDir.y = 0;
-			enemyRigidbody.rotation = Quaternion.Slerp (enemyRigidbody.rotation, Quaternion.LookRotation (enemyDir), 0.05f);
-			if (enemyDir.magnitude > chaseDist && !bumpToWall) {
+			if (!player.GetComponent<PlayerMovementControl> ().isSneak) {
+				enemyDir.y = 0;
+				enemyRigidbody.rotation = Quaternion.Slerp (enemyRigidbody.rotation, Quaternion.LookRotation (enemyDir), 0.05f);
+			}
+			if (enemyDir.magnitude > chaseDist && !bumpToWall && angle < _sightAngle) {
 				//enemyTransform.Translate (0, 0, 0.005f);
 
 				Vector3 enemyMovePosition = enemyRigidbody.position + enemyDir.normalized * moveSpeed * Time.deltaTime;
@@ -165,7 +167,7 @@ public class EnemyControl : MonoBehaviour {
 				Walk ();
 			} else if (getHitDelay > 0) {
 				getHitDelay--;
-			} else if (attackDelay <= 0 && !wallDetector.isBumpToWall) {
+			} else if (attackDelay <= 0 && !wallDetector.isBumpToWall && angle < _sightAngle) {
 				if(!player.GetComponent<PlayerMovementControl>().attacking){
 					BasicAttack ();
 					attackDelay = _attackDelay;

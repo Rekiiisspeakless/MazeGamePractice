@@ -18,6 +18,8 @@ public class PlayerMovementControl : MonoBehaviour {
 	public bool attacking = false;
 	public static float _attackingDelay = 10f;
 	public bool isSwordEquipped = false;
+	public float sneakSpeed = 0.5f;
+	public bool isSneak = false;
 
 	private float attackingDelay = _attackingDelay;
 	private float getHitDelay = _getHitDelay;
@@ -64,11 +66,14 @@ public class PlayerMovementControl : MonoBehaviour {
 		anim.SetBool ("isIdle", false);
 		anim.SetBool ("isAttack", false);
 		anim.SetBool ("isRoll", false);
+		anim.SetBool ("isSneak", false);
+		isSneak = false;
 	}
 
 
 	public void Attack()
 	{
+		anim.SetBool ("isSneak", false);
 		anim.SetBool ("isHit", false);
 		anim.SetBool ("isWalk", false);
 		anim.SetBool ("isIdle", false);
@@ -77,20 +82,33 @@ public class PlayerMovementControl : MonoBehaviour {
 	}
 
 	public void Idle(){
+		anim.SetBool ("isSneak", false);
 		anim.SetBool ("isHit", false);
 		anim.SetBool ("isWalk", false);
 		anim.SetBool ("isIdle", true);
 		anim.SetBool ("isAttack", false);
 		anim.SetBool ("isRoll", false);
+		isSneak = false;
 	}
 	public void GetHit(){
+		anim.SetBool ("isSneak", false);
 		anim.SetBool ("isHit", true);
 		anim.SetBool ("isWalk", false);
 		anim.SetBool ("isIdle", false);
 		anim.SetBool ("isAttack", false);
 		anim.SetBool ("isRoll", false);
 	}
+	public void Sneak(){
+		anim.SetBool ("isSneak", true);
+		anim.SetBool ("isHit", false);
+		anim.SetBool ("isWalk", false);
+		anim.SetBool ("isIdle", false);
+		anim.SetBool ("isAttack", false);
+		anim.SetBool ("isRoll", false);
+		isSneak = true;
+	}
 	public void Roll(){
+		anim.SetBool ("isSneak", false);
 		anim.SetBool ("isRoll", true);
 	}
 
@@ -191,11 +209,19 @@ public class PlayerMovementControl : MonoBehaviour {
 		else if((Input.GetButton("Horizontal") || Input.GetButton("Vertical")) 
 			&& !anim.GetCurrentAnimatorStateInfo(0).IsName("roll"))
 		{
-			Walk ();
+			if (Input.GetButton ("Shift")) {
+				Sneak ();
+			} else {
+				Walk ();
+			}
 			if(Vector2.Distance(Vector2.zero, new Vector2(horizontal, vertical)) > delay){
 				Vector3 moveDir = new Vector3 (horizontal, 0f, vertical);
 				moveDir = playerRidgidBody.rotation * moveDir; //moveDir  * playerRidgidBody.rotation.eulerAngles;
-				playerRidgidBody.MovePosition(playerRidgidBody.position + moveDir * Time.deltaTime);
+				if (Input.GetButton ("Shift")) {
+					playerRidgidBody.MovePosition (playerRidgidBody.position + moveDir * sneakSpeed * Time.deltaTime);
+				} else {
+					playerRidgidBody.MovePosition (playerRidgidBody.position + moveDir * Time.deltaTime);
+				}
 			}
 		}
 		else
@@ -220,7 +246,7 @@ public class PlayerMovementControl : MonoBehaviour {
 	void AudioManagement()
 	{
 		//GetComponent<AudioSource>().Play();
-		if (anim.GetBool("isWalk") == true && anim.GetBool("isRoll") == false)
+		if (anim.GetBool("isWalk") == true && anim.GetBool("isRoll") == false && anim.GetBool("isSneak") == false)
 		{
 			audioFootstepDelay -= Time.deltaTime;
 			if (!GetComponent<AudioSource>().isPlaying && audioFootstepDelay <= 0)
