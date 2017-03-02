@@ -265,9 +265,15 @@ public class Maze : MonoBehaviour {
     }
 	public void DropItem(Vector3 dropPosition){
 		Random.seed = System.Guid.NewGuid().GetHashCode();
-		int isDrop = Random.Range(0, 15);
+		int isDrop = Random.Range(0, 30);
 		if (isDrop % 3 == 0) {
 			drops [currentDropsNum] = Instantiate (swordPrefab, dropPosition, Quaternion.identity) as GameObject;
+			currentDropsNum++;
+		} else if (isDrop % 3 == 1) {
+			drops [currentDropsNum] = Instantiate (applePrefab, dropPosition, Quaternion.identity) as GameObject;
+			currentDropsNum++;
+		} else {
+			drops [currentDropsNum] = Instantiate (potionPrefab, dropPosition, Quaternion.identity) as GameObject;
 			currentDropsNum++;
 		}
 	}

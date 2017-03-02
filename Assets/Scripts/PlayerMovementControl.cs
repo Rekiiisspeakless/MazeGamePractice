@@ -111,6 +111,15 @@ public class PlayerMovementControl : MonoBehaviour {
 		anim.SetBool ("isSneak", false);
 		anim.SetBool ("isRoll", true);
 	}
+	public void Die(){
+		anim.SetBool ("isDead", true);
+		anim.SetBool ("isSneak", false);
+		anim.SetBool ("isHit", false);
+		anim.SetBool ("isWalk", false);
+		anim.SetBool ("isIdle", false);
+		anim.SetBool ("isAttack", false);
+		anim.SetBool ("isRoll", false);
+	}
 
 	void Update () {
 		
@@ -167,6 +176,7 @@ public class PlayerMovementControl : MonoBehaviour {
 			Debug.Log ("Player Rotate!");
 			PlayerRotate(horizontal, vertical);
 		}*/
+
 
 		if (horizontal != 0f) {
 			Debug.Log ("Player Rotate!");
@@ -231,7 +241,10 @@ public class PlayerMovementControl : MonoBehaviour {
 		{
 			Idle ();
 		}
-			
+
+		if (currentHealth <= 0) {
+			Die ();
+		}
 
 	}
 

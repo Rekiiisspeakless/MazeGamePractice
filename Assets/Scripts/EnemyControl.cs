@@ -49,7 +49,7 @@ public class EnemyControl : MonoBehaviour {
 
 			//anim.SetTrigger("GetHit");
 			getHitDelay = _getHitDelay;
-			if (enemyCurrentHealth == 0f) {
+			if (enemyCurrentHealth <= 0f) {
 				dropDownDelay = _dropDownDelay;
 				Die ();
 				//Destroy (gameObject);
